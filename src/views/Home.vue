@@ -1,21 +1,97 @@
 <template>
   <div class="container">
+    <div class="row justify-content-center">
+      <datepicker
+        class="width-50"
+        v-model="selecteDate"
+        :enableTimePicker="false"
+        autoApply
+        format="Y-MM-dd"
+      />
+    </div>
     <div class="row">
-      <div class="col-6">
-        <ul>
-          <li v-for="(competition, index) in competitions" :key="index">
-            <a href="#" @click="changeselectedCompetitionId(competition.id)">{{
-              competition.name
-            }}</a>
-          </li>
-        </ul>
+      <div class="col-3">
+        <div class="list-group">
+          <input type="text" v-model="searchLeague" class="form-control" />
+          <a
+            v-for="(competition, index) in filtredCompetions"
+            :key="index"
+            href="#"
+            class="list-group-item list-group-item-action"
+            :class="selectedCompetitionId == competition.id ? 'active' : ''"
+            aria-current="true"
+            @click="changeselectedCompetitionId(competition.id)"
+          >
+            {{ competition.name }}
+          </a>
+        </div>
       </div>
-      <div class="col-6">
-        <ul>
-          <li v-for="(match, index) in filtredMatchs" :key="index">
-            {{ match.home_team.name }} Vs {{ match.away_team.name }}
-          </li>
-        </ul>
+      <div class="col-9">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Domicile</th>
+              <th>Extérieur</th>
+              <th>Heure</th>
+              <th colspan="2">Score</th>
+              <th>Prono</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(match, index) in filtredMatchs" :key="index">
+              <th>{{ match.home_team.name }}</th>
+              <th>{{ match.away_team.name }}</th>
+              <td>{{ match.time }}</td>
+              <td>
+                {{
+                  match.scoreHome == null && match.scoreAway != null
+                    ? 0
+                    : match.scoreHome
+                }}
+              </td>
+              <td>
+                {{
+                  match.scoreAway == null && match.scoreHome != null
+                    ? 0
+                    : match.scoreAway
+                }}
+              </td>
+              <td>
+                <button
+                  :class="
+                    pronoOfMatch(match.id) && pronoOfMatch(match.id) == '1'
+                      ? 'btn-success'
+                      : 'btn-secondary'
+                  "
+                  class="btn"
+                  @click="setProno(match.id, '1')"
+                >
+                  1</button
+                ><button
+                  :class="
+                    pronoOfMatch(match.id) && pronoOfMatch(match.id) == 'x'
+                      ? 'btn-success'
+                      : 'btn-secondary'
+                  "
+                  class="btn"
+                  @click="setProno(match.id, 'x')"
+                >
+                  x</button
+                ><button
+                  :class="
+                    pronoOfMatch(match.id) && pronoOfMatch(match.id) == '2'
+                      ? 'btn-success'
+                      : 'btn-secondary'
+                  "
+                  class="btn"
+                  @click="setProno(match.id, '2')"
+                >
+                  2
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -24,16 +100,22 @@
 <script>
 // @ is an alias to /src
 import { mapGetters } from "vuex";
+import Datepicker from "vue3-date-time-picker";
 
 export default {
   name: "Home",
+  components: {
+    Datepicker,
+  },
   data() {
     return {
       selectedCompetitionId: -1,
+      selecteDate: Date(),
+      searchLeague: "",
     };
   },
   computed: {
-    ...mapGetters(["matchs"]),
+    ...mapGetters(["matchs", "userPronos"]),
     competitions() {
       let allCompetitions = [];
       this.matchs.forEach((match) => {
@@ -43,6 +125,17 @@ export default {
       });
       // return [...new Set(this.matchs.map((match) => match.competition))];
       return allCompetitions;
+    },
+    filtredCompetions() {
+      if (this.searchLeague == "") {
+        return this.competitions;
+      } else {
+        return this.competitions.filter((competition) =>
+          competition.name
+            .toLowerCase()
+            .includes(this.searchLeague.toLowerCase())
+        );
+      }
     },
     filtredMatchs() {
       return this.matchs.filter(
@@ -54,8 +147,27 @@ export default {
     changeselectedCompetitionId(id) {
       this.selectedCompetitionId = id;
     },
+    setProno(matchID, prono) {
+      this.$store.dispatch("setProno", {
+        match:
+          this.matchs[this.matchs.findIndex((match) => match.id == matchID)],
+        prono: prono,
+      });
+    },
+    pronoOfMatch(matchID) {
+      let prono = this.userPronos.find((prono) => prono.match.id == matchID);
+      if (prono != undefined) {
+        return prono.prono;
+      } else {
+        return false;
+      }
+    },
   },
-
+  watch: {
+    selecteDate() {
+      this.$store.dispatch("getMatchsOfSelectedDate", this.selecteDate);
+    },
+  },
   mounted() {
     this.$store.dispatch("getMatchsToDay");
   },
