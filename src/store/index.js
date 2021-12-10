@@ -5,6 +5,7 @@ export default createStore({
   state: {
     matchToDay: [],
     pronos: [],
+    user: {},
   },
   mutations: {
     setMaths(state, matchs) {
@@ -25,6 +26,9 @@ export default createStore({
         state.pronos[index].prono = prono.prono;
       }
     },
+    setLoggedUsed(state, user) {
+      state.user = user;
+    },
   },
   actions: {
     getMatchsToDay({ commit }) {
@@ -32,15 +36,37 @@ export default createStore({
         commit("setMaths", response.data);
       });
     },
-    getMatchsOfSelectedDate({ commit }, date) {
+    getMatchsOfSelectedDate({ commit,state }, date) {
       axios
-        .post("http://localhost:8000/api/matchsInDay", { date: date })
+        .post(
+          "http://localhost:8000/api/matchsInDay",
+          { date: date },
+          {
+            headers: {
+              Authorization: `Bearer ${state.user.access_token}`,
+            },
+          }
+        )
         .then((response) => {
           commit("setMaths", response.data);
         });
     },
     setProno({ commit }, prono) {
       commit("setProno", prono);
+    },
+    register({ commit }, credentials) {
+      axios
+        .post("http://localhost:8000/api/signup", { ...credentials })
+        .then((response) => {
+          commit("setLoggedUsed", response.data);
+        });
+    },
+    login({ commit }, credentials) {
+      axios
+        .post("http://localhost:8000/api/signin", { ...credentials })
+        .then((response) => {
+          commit("setLoggedUsed", response.data);
+        });
     },
   },
   getters: {

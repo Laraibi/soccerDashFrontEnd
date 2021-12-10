@@ -22,7 +22,7 @@
             aria-current="true"
             @click="changeselectedCompetitionId(competition.id)"
           >
-            {{ competition.name }}
+            {{ competition.countrie.name + "-" + competition.name }}
           </a>
         </div>
       </div>
