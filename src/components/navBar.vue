@@ -21,9 +21,12 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/">Home</router-link>
           </li>
+          <l v-if="loggedUser.user != undefined" class="nav-item">
+            <router-link class="nav-link" to="/selfPronos">Mes Pronos</router-link>
+          </l>
         </ul>
         <form
-          v-if="this.$store.getters.loggedUser.user == undefined"
+          v-if="loggedUser.user == undefined"
           class="d-flex"
         >
           <input
