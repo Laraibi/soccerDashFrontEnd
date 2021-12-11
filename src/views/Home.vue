@@ -64,7 +64,7 @@
                       : 'btn-secondary'
                   "
                   class="btn"
-                  @click="setProno(match.id, '1')"
+                  @click="setProno(match.id, '1',match.mise)"
                 >
                   1</button
                 ><button
@@ -74,7 +74,7 @@
                       : 'btn-secondary'
                   "
                   class="btn"
-                  @click="setProno(match.id, 'x')"
+                  @click="setProno(match.id, 'x',match.mise)"
                 >
                   x</button
                 ><button
@@ -84,10 +84,11 @@
                       : 'btn-secondary'
                   "
                   class="btn"
-                  @click="setProno(match.id, '2')"
+                  @click="setProno(match.id, '2',match.mise)"
                 >
                   2
                 </button>
+                <input type="text" class="form-contron:text" v-model="match.mise">
               </td>
             </tr>
           </tbody>
@@ -138,24 +139,28 @@ export default {
       }
     },
     filtredMatchs() {
-      return this.matchs.filter(
-        (match) => match.competition.id == this.selectedCompetitionId
-      );
+      return this.matchs
+        .filter((match) => match.competition.id == this.selectedCompetitionId)
+        .map((match) => {
+          match.mise = 0;
+          return match;
+        });
     },
   },
   methods: {
     changeselectedCompetitionId(id) {
       this.selectedCompetitionId = id;
     },
-    setProno(matchID, prono) {
-      this.$store.dispatch("setProno", {
-        match:
-          this.matchs[this.matchs.findIndex((match) => match.id == matchID)],
+    setProno(matchID, prono, mise) {
+      this.$store.dispatch("makeProno", {
+        match_id:
+          this.matchs[this.matchs.findIndex((match) => match.id == matchID)].id,
         prono: prono,
+        mise: mise,
       });
     },
     pronoOfMatch(matchID) {
-      let prono = this.userPronos.find((prono) => prono.match.id == matchID);
+      let prono = this.userPronos.find((prono) => prono.soccer_match.id == matchID);
       if (prono != undefined) {
         return prono.prono;
       } else {

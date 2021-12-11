@@ -11,6 +11,9 @@ export default createStore({
     setMaths(state, matchs) {
       state.matchToDay = matchs;
     },
+    fillPronos(state,userPronos){
+      state.pronos=userPronos
+    },
     setProno(state, prono) {
       // if(state.pronos.some((settedProno)=>settedProno.match.id==prono.match.id))
       // {
@@ -18,7 +21,7 @@ export default createStore({
       // }
       // if(state.pronos.findIndex())
       let index = state.pronos.findIndex(
-        (userProno) => userProno.match.id == prono.match.id
+        (userProno) => userProno.soccer_match.id == prono.soccer_match.id
       );
       if (index == -1) {
         this.state.pronos.push(prono);
@@ -29,6 +32,9 @@ export default createStore({
     setLoggedUsed(state, user) {
       state.user = user;
     },
+    updateUserSolde(state,solde){
+      state.user.user.solde=solde
+    }
   },
   actions: {
     getMatchsToDay({ commit }) {
@@ -51,8 +57,37 @@ export default createStore({
           commit("setMaths", response.data);
         });
     },
-    setProno({ commit }, prono) {
-      commit("setProno", prono);
+    loadUserPronos({commit,state}){
+      axios
+      .get(
+        "http://localhost:8000/api/Prono",
+        {
+          headers: {
+            Authorization: `Bearer ${state.user.access_token}`,
+          },
+        }
+      )
+      .then((response) => {
+        commit("fillPronos", response.data);
+      });
+    },
+    makeProno({ commit,state }, prono) {
+      // commit("setProno", prono);
+      axios
+      .post(
+        "http://localhost:8000/api/Prono",
+        { ...prono },
+        {
+          headers: {
+            Authorization: `Bearer ${state.user.access_token}`,
+          },
+        }
+      )
+      .then((response) => {
+
+        commit("updateUserSolde", response.data.soldeUser);
+        commit("setProno", response.data.prono);
+      });
     },
     register({ commit }, credentials) {
       axios
@@ -66,6 +101,18 @@ export default createStore({
         .post("http://localhost:8000/api/signin", { ...credentials })
         .then((response) => {
           commit("setLoggedUsed", response.data);
+          this.dispatch("loadUserPronos");
+        });
+    },
+    logout({ commit,state }){
+      axios
+        .get("http://localhost:8000/api/logout",{
+          headers: {
+            Authorization: `Bearer ${state.user.access_token}`,
+          },
+        })
+        .then(() => {
+          commit("setLoggedUsed", {});
         });
     },
   },
@@ -76,6 +123,9 @@ export default createStore({
     userPronos(state) {
       return state.pronos;
     },
+    loggedUser(state){
+      return state.user
+    }
   },
   modules: {},
 });
