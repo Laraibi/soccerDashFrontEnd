@@ -9,6 +9,8 @@ export default createStore({
     matchToDay: [],
     pronos: [],
     user: {},
+    jsonFilesAvaillable: [],
+    importedJsonFiles: [],
   },
   mutations: {
     setMaths(state, matchs) {
@@ -41,12 +43,33 @@ export default createStore({
     updateUserSolde(state, solde) {
       state.user.user.solde = solde;
     },
+    setAvaillableFilles(state, availlableFies) {
+      state.jsonFilesAvaillable = availlableFies;
+    },
+    addImportedFile(state, file) {
+      state.importedJsonFiles.push(file);
+    },
   },
   actions: {
+    getAvailableFiles({ commit }) {
+      axios.get("api/getAvailableJsonFiles").then((response) => {
+        commit("setAvaillableFilles", response.data);
+      });
+    },
     getMatchsToDay({ commit }) {
       axios.get("api/matchsToDay").then((response) => {
         commit("setMaths", response.data);
       });
+    },
+    startImport({ commit }, fileName) {
+      axios
+        .post("api/importJson", { fileName: fileName, Password: "thePassWord" })
+        .then((response) => {
+          commit("addImportedFile", {
+            fileName: response.date.fileName,
+            counts: response.date.counts,
+          });
+        });
     },
     getMatchsOfSelectedDate({ commit, state }, date) {
       axios
@@ -125,6 +148,9 @@ export default createStore({
     },
   },
   getters: {
+    jsonFiles(state) {
+      return state.jsonFilesAvaillable;
+    },
     matchs(state) {
       return state.matchToDay;
     },

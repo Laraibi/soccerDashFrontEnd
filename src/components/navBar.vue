@@ -21,9 +21,12 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/">Home</router-link>
           </li>
-          <l v-if="loggedUser.user != undefined" class="nav-item">
+          <li v-if="loggedUser.user != undefined" class="nav-item">
             <router-link class="nav-link" to="/selfPronos">Mes Pronos</router-link>
-          </l>
+          </li>
+          <li  class="nav-item">
+            <router-link class="nav-link" to="/importJson">Import Json</router-link>
+          </li>
         </ul>
         <form
           v-if="loggedUser.user == undefined"
