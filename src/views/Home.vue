@@ -1,14 +1,5 @@
 <template>
   <div class="container">
-    <div class="row justify-content-center">
-      <datepicker
-        class="width-50"
-        v-model="selecteDate"
-        :enableTimePicker="false"
-        autoApply
-        format="Y-MM-dd"
-      />
-    </div>
     <div class="row">
       <div class="col-3">
         <div class="list-group">
@@ -27,6 +18,15 @@
         </div>
       </div>
       <div class="col-9">
+        <div class="row justify-content-center">
+          <datepicker
+            class="width-50"
+            v-model="selecteDate"
+            :enableTimePicker="false"
+            autoApply
+            format="Y-MM-dd"
+          />
+        </div>
         <table class="table">
           <thead>
             <tr>
@@ -35,6 +35,7 @@
               <th>Heure</th>
               <th colspan="2">Score</th>
               <th>Prono</th>
+              <th>Nombre Pronostics</th>
             </tr>
           </thead>
           <tbody>
@@ -57,39 +58,46 @@
                 }}
               </td>
               <td>
-                <button
-                  :class="
-                    pronoOfMatch(match.id) && pronoOfMatch(match.id) == '1'
-                      ? 'btn-success'
-                      : 'btn-secondary'
-                  "
-                  class="btn"
-                  @click="setProno(match.id, '1',match.mise)"
-                >
-                  1</button
-                ><button
-                  :class="
-                    pronoOfMatch(match.id) && pronoOfMatch(match.id) == 'x'
-                      ? 'btn-success'
-                      : 'btn-secondary'
-                  "
-                  class="btn"
-                  @click="setProno(match.id, 'x',match.mise)"
-                >
-                  x</button
-                ><button
-                  :class="
-                    pronoOfMatch(match.id) && pronoOfMatch(match.id) == '2'
-                      ? 'btn-success'
-                      : 'btn-secondary'
-                  "
-                  class="btn"
-                  @click="setProno(match.id, '2',match.mise)"
-                >
-                  2
-                </button>
-                <input type="text" class="form-contron:text" v-model="match.mise">
+                <div v-if="match.time != null" id="makeProno">
+                  <button
+                    :class="
+                      pronoOfMatch(match.id) && pronoOfMatch(match.id) == '1'
+                        ? 'btn-success'
+                        : 'btn-secondary'
+                    "
+                    class="btn"
+                    @click="setProno(match.id, '1', match.mise)"
+                  >
+                    1</button
+                  ><button
+                    :class="
+                      pronoOfMatch(match.id) && pronoOfMatch(match.id) == 'x'
+                        ? 'btn-success'
+                        : 'btn-secondary'
+                    "
+                    class="btn"
+                    @click="setProno(match.id, 'x', match.mise)"
+                  >
+                    x</button
+                  ><button
+                    :class="
+                      pronoOfMatch(match.id) && pronoOfMatch(match.id) == '2'
+                        ? 'btn-success'
+                        : 'btn-secondary'
+                    "
+                    class="btn"
+                    @click="setProno(match.id, '2', match.mise)"
+                  >
+                    2
+                  </button>
+                  <input
+                    type="text"
+                    class="form-contron:text"
+                    v-model="match.mise"
+                  />
+                </div>
               </td>
+              <td>{{ match.pronos_count }}</td>
             </tr>
           </tbody>
         </table>
@@ -102,6 +110,7 @@
 // @ is an alias to /src
 import { mapGetters } from "vuex";
 import Datepicker from "vue3-date-time-picker";
+let moment = require("moment");
 
 export default {
   name: "Home",
@@ -151,6 +160,9 @@ export default {
     changeselectedCompetitionId(id) {
       this.selectedCompetitionId = id;
     },
+    parsedDate(date) {
+      return moment.utc(date);
+    },
     setProno(matchID, prono, mise) {
       this.$store.dispatch("makeProno", {
         match_id:
@@ -160,7 +172,9 @@ export default {
       });
     },
     pronoOfMatch(matchID) {
-      let prono = this.userPronos.find((prono) => prono.soccer_match.id == matchID);
+      let prono = this.userPronos.find(
+        (prono) => prono.soccer_match.id == matchID
+      );
       if (prono != undefined) {
         return prono.prono;
       } else {

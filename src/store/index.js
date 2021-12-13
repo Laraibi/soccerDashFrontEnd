@@ -36,7 +36,7 @@ export default createStore({
       state.user = user;
     },
     deleteProno(state, pronoID) {
-      state.pronos=state.pronos.filter((prono) => prono.id != pronoID);
+      state.pronos = state.pronos.filter((prono) => prono.id != pronoID);
     },
     updateUserSolde(state, solde) {
       state.user.user.solde = solde;
@@ -102,19 +102,15 @@ export default createStore({
         });
     },
     register({ commit }, credentials) {
-      axios
-        .post("api/signup", { ...credentials })
-        .then((response) => {
-          commit("setLoggedUsed", response.data);
-        });
+      axios.post("api/signup", { ...credentials }).then((response) => {
+        commit("setLoggedUsed", response.data);
+      });
     },
     login({ commit }, credentials) {
-      axios
-        .post("api/signin", { ...credentials })
-        .then((response) => {
-          commit("setLoggedUsed", response.data);
-          this.dispatch("loadUserPronos");
-        });
+      axios.post("api/signin", { ...credentials }).then((response) => {
+        commit("setLoggedUsed", response.data);
+        this.dispatch("loadUserPronos");
+      });
     },
     logout({ commit, state }) {
       axios
@@ -137,6 +133,20 @@ export default createStore({
     },
     loggedUser(state) {
       return state.user;
+    },
+    userPronosStats(state, getters) {
+      return {
+        Success: getters.userPronos.filter((prono) => prono.Result == true)
+          .length,
+        Failed: getters.userPronos.filter((prono) => prono.Result == false)
+          .length,
+        Programed: getters.userPronos.filter(
+          (prono) => prono.Result == "notYet"
+        ).length,
+        Wait: getters.userPronos.filter(
+          (prono) => prono.Result == "waitingForResult"
+        ).length,
+      };
     },
   },
   modules: {},
