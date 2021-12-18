@@ -18,6 +18,11 @@ const routes = [
     path:'/importJson',
     name:'importJson',
     component:importJson
+  },
+  {
+    path:'/ranking',
+    name:'ranking',
+    component:ranking
   }
 ]
 

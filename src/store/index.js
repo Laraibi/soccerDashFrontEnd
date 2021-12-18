@@ -2,7 +2,8 @@ import axios from "axios";
 import { createStore } from "vuex";
 axios.defaults.withCredentials = true;
 axios.defaults.headers.post["Content-Type"] = "application/json";
-axios.defaults.baseURL = "http://soccerDash.test/";
+// axios.defaults.baseURL = "http://soccerDash.test/";
+axios.defaults.baseURL = "http://192.168.1.6:901";
 
 export default createStore({
   state: {
@@ -11,6 +12,7 @@ export default createStore({
     user: {},
     jsonFilesAvaillable: [],
     importedJsonFiles: [],
+    allUsersPronos: [],
   },
   mutations: {
     setMaths(state, matchs) {
@@ -20,11 +22,6 @@ export default createStore({
       state.pronos = userPronos;
     },
     setProno(state, prono) {
-      // if(state.pronos.some((settedProno)=>settedProno.match.id==prono.match.id))
-      // {
-      //   state.pronos.indexOf((seetedProno)=>seetedPronoprono.match.id==)
-      // }
-      // if(state.pronos.findIndex())
       let index = state.pronos.findIndex(
         (userProno) => userProno.soccer_match.id == prono.soccer_match.id
       );
@@ -48,6 +45,9 @@ export default createStore({
     },
     addImportedFile(state, file) {
       state.importedJsonFiles.push(file);
+    },
+    fillUsersPronos(state, Pronos) {
+      state.allUsersPronos = Pronos;
     },
   },
   actions: {
@@ -132,6 +132,7 @@ export default createStore({
     login({ commit }, credentials) {
       axios.post("api/signin", { ...credentials }).then((response) => {
         commit("setLoggedUsed", response.data);
+        localStorage.setItem("user", JSON.stringify(response.data));
         this.dispatch("loadUserPronos");
       });
     },
@@ -144,6 +145,18 @@ export default createStore({
         })
         .then(() => {
           commit("setLoggedUsed", {});
+        });
+    },
+    getAllUserPronos({ commit, state }) {
+      axios
+        .get("api/allUsersPronos", {
+          headers: {
+            Authorization: `Bearer ${state.user.access_token}`,
+          },
+        })
+        .then((response) => {
+          // console.log(response.data);
+          commit("fillUsersPronos", response.data);
         });
     },
   },
@@ -173,6 +186,9 @@ export default createStore({
           (prono) => prono.Result == "waitingForResult"
         ).length,
       };
+    },
+    allUserPronos(state) {
+      return state.allUsersPronos;
     },
   },
   modules: {},
