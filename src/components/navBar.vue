@@ -22,16 +22,22 @@
             <router-link class="nav-link" to="/">Home</router-link>
           </li>
           <li v-if="loggedUser.user != undefined" class="nav-item">
-            <router-link class="nav-link" to="/selfPronos">Mes Pronos</router-link>
+            <router-link class="nav-link" to="/selfPronos"
+              >Mes Pronos</router-link
+            >
           </li>
-          <li  class="nav-item">
-            <router-link class="nav-link" to="/importJson">Import Json</router-link>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/importJson"
+              >Import Json</router-link
+            >
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/ranking"
+              >Classement</router-link
+            >
           </li>
         </ul>
-        <form
-          v-if="loggedUser.user == undefined"
-          class="d-flex"
-        >
+        <form v-if="loggedUser.user == undefined" class="d-flex">
           <input
             class="form-control me-2"
             placeholder="name (regiter)"
