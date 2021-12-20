@@ -52,29 +52,43 @@ export default createStore({
     },
   },
   actions: {
-    getAvailableFiles({ commit }) {
-      axios.get("api/getAvailableJsonFiles").then((response) => {
-        commit("setAvaillableFilles", response.data);
-      });
+    getAvailableFiles({ commit, state }) {
+      axios
+        .get("api/getAvailableJsonFiles", {
+          headers: {
+            Authorization: `Bearer ${state.user.access_token}`,
+          },
+        })
+        .then((response) => {
+          commit("setAvaillableFilles", response.data);
+        });
     },
     getMatchsToDay({ commit }) {
       axios.get("api/matchsToDay").then((response) => {
         commit("setMaths", response.data);
       });
     },
-    startImport({ commit }, fileName) {
+    startImport({ commit, state }, fileName) {
       axios
-        .post("api/importJson", { fileName: fileName, Password: "thePassWord" })
+        .post(
+          "api/importJson",
+          { fileName: fileName, Password: "thePassWord" },
+          {
+            headers: {
+              Authorization: `Bearer ${state.user.access_token}`,
+            },
+          }
+        )
         .then((response) => {
           commit("addImportedFile", {
-            fileName: response.date.fileName,
-            counts: response.date.counts,
+            fileName: response.data.fileName,
+            counts: response.data.counts,
           });
         });
     },
     getMatchsOfSelectedDate({ commit, state }, date) {
       // console.log(date.toString());
-      let selectedDate=moment(date).format('YYYY-MM-DD')
+      let selectedDate = moment(date).format("YYYY-MM-DD");
       axios
         .post(
           "api/matchsInDay",
@@ -196,9 +210,12 @@ export default createStore({
           name: user.name,
           totalPronos: user.pronos.length,
           success: user.pronos.filter((prono) => prono.Result == true).length,
-          failed:user.pronos.filter((prono) => prono.Result == false).length,
-          wait:user.pronos.filter((prono) => prono.Result == 'waitingForResult').length,
-          Programed:user.pronos.filter((prono) => prono.Result == "notYet").length
+          failed: user.pronos.filter((prono) => prono.Result == false).length,
+          wait: user.pronos.filter(
+            (prono) => prono.Result == "waitingForResult"
+          ).length,
+          Programed: user.pronos.filter((prono) => prono.Result == "notYet")
+            .length,
         };
       });
     },
