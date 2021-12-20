@@ -4,6 +4,7 @@ axios.defaults.withCredentials = true;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 // axios.defaults.baseURL = "http://soccerDash.test/";
 axios.defaults.baseURL = "http://192.168.1.6:901";
+let moment = require("moment");
 
 export default createStore({
   state: {
@@ -72,10 +73,12 @@ export default createStore({
         });
     },
     getMatchsOfSelectedDate({ commit, state }, date) {
+      // console.log(date.toString());
+      let selectedDate=moment(date).format('YYYY-MM-DD')
       axios
         .post(
           "api/matchsInDay",
-          { date: date },
+          { date: selectedDate },
           {
             headers: {
               Authorization: `Bearer ${state.user.access_token}`,
@@ -187,8 +190,17 @@ export default createStore({
         ).length,
       };
     },
-    allUserPronos(state) {
-      return state.allUsersPronos;
+    allUserPronosStats(state) {
+      return state.allUsersPronos.map((user) => {
+        return {
+          name: user.name,
+          totalPronos: user.pronos.length,
+          success: user.pronos.filter((prono) => prono.Result == true).length,
+          failed:user.pronos.filter((prono) => prono.Result == false).length,
+          wait:user.pronos.filter((prono) => prono.Result == 'waitingForResult').length,
+          Programed:user.pronos.filter((prono) => prono.Result == "notYet").length
+        };
+      });
     },
   },
   modules: {},

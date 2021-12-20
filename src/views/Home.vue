@@ -20,6 +20,7 @@
       <div class="col-9">
         <div class="row justify-content-center">
           <datepicker
+          locale="fr-ma"
             class="width-50"
             v-model="selecteDate"
             :enableTimePicker="false"
@@ -184,6 +185,7 @@ export default {
   },
   watch: {
     selecteDate() {
+      // console.log(this.selecteDate.toString());
       this.$store.dispatch("getMatchsOfSelectedDate", this.selecteDate);
     },
   },

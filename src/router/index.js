@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import selfPronos from '../views/selfPronos.vue'
 import importJson from '../views/importJson.vue'
-
+import ranking from "../components/ranking.vue"
 const routes = [
   {
     path: '/',
