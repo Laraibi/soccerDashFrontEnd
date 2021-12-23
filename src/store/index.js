@@ -2,8 +2,8 @@ import axios from "axios";
 import { createStore } from "vuex";
 axios.defaults.withCredentials = true;
 axios.defaults.headers.post["Content-Type"] = "application/json";
-// axios.defaults.baseURL = "http://soccerDash.test/";
-axios.defaults.baseURL = "http://192.168.1.6:901";
+axios.defaults.baseURL = "http://soccerDash.test/";
+// axios.defaults.baseURL = "http://192.168.1.6:901";
 let moment = require("moment");
 
 export default createStore({
@@ -69,7 +69,7 @@ export default createStore({
       });
     },
     startImport({ commit, state }, fileName) {
-      axios
+      return axios
         .post(
           "api/importJson",
           { fileName: fileName, Password: "thePassWord" },
@@ -84,6 +84,10 @@ export default createStore({
             fileName: response.data.fileName,
             counts: response.data.counts,
           });
+          return {
+            fileName: response.data.fileName,
+            counts: response.data.counts,
+          };
         });
     },
     getMatchsOfSelectedDate({ commit, state }, date) {
@@ -180,6 +184,9 @@ export default createStore({
   getters: {
     jsonFiles(state) {
       return state.jsonFilesAvaillable;
+    },
+    importedJsonFiles(state) {
+      return state.importedJsonFiles;
     },
     matchs(state) {
       return state.matchToDay;

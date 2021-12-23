@@ -1,4 +1,5 @@
 <template>
+  <button class="btn btn-info" @click="test">test</button>
   <div class="row justify-content-center">
     <div class="col-6">
       <table class="table table-bordered">
@@ -13,7 +14,11 @@
           <tr v-for="(file, index) in jsonFiles" :key="index">
             <td>{{ file.fileName }}</td>
             <td>
-              <button v-if="!file.isImported" class="btn btn-info" @click="startImport(file.fileName)">
+              <button
+                v-if="!file.isImported"
+                class="btn btn-info"
+                @click="startImport(file.fileName)"
+              >
                 Import
               </button>
               <button v-else class="btn btn-secondary" disabled>
@@ -21,7 +26,7 @@
               </button>
             </td>
             <td>
-              {{file.user != null ? file.user.name : file.user}}
+              {{ file.user != null ? file.user.name : file.user }}
             </td>
           </tr>
         </tbody>
@@ -34,15 +39,28 @@ import { mapGetters } from "vuex";
 export default {
   name: "jsonFiles",
   methods: {
+    test() {
+      console.log(this.importedJsonFiles.slice(-1)[0].fileName);
+    },
     startImport(fileName) {
-      this.$store.dispatch("startImport", fileName);
+      this.$store.dispatch("startImport", fileName).then((response) => {
+        console.log(response);
+        this.$notify(
+          `FileName : ${this.importedJsonFiles.slice(-1)[0].fileName} imported`
+        );
+      });
     },
   },
   created() {
     this.$store.dispatch("getAvailableFiles");
   },
+  // watch:{
+  //   importedJsonFiles(){
+  //     console.log("importedJsonFiles was changed")
+  //   }
+  // },
   computed: {
-    ...mapGetters(["jsonFiles"]),
+    ...mapGetters(["jsonFiles", "importedJsonFiles"]),
   },
 };
 </script>

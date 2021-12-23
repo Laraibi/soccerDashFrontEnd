@@ -1,4 +1,5 @@
 <template>
+  <notifications />
   <nav-bar></nav-bar>
   <div class="container container-sm-fluid">
     <router-view />
