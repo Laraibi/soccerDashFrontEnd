@@ -1,7 +1,11 @@
 <template>
   <div class="row">
+    <div class="row justify-content-end">
+      <div class="col-3">
+        <button class="btn btn-secondary w-100 text-center" @click="refresh">Refresh</button>
+      </div>
+    </div>
     <div class="row mt-2">
-
       <div class="col-3">
         <span class="w-100 badge bg-success">
           <div class="form-check form-switch">
@@ -65,7 +69,7 @@
       </div>
     </div>
     <div class="row mt-2">
-      <table class="table table-bordered text-center  table-hover">
+      <table class="table table-bordered text-center table-hover">
         <thead class="table-dark">
           <tr>
             <td>#</td>
@@ -73,7 +77,6 @@
             <td>Score</td>
             <td>Date Time</td>
             <td>Prono</td>
-            <td>Mise</td>
             <td>Opérations</td>
           </tr>
         </thead>
@@ -101,7 +104,6 @@
               }}
             </td>
             <td>{{ prono.prono }}</td>
-            <td>{{ prono.mise }}</td>
             <td>
               <div v-if="prono.Result == 'notYet'" id="pronoActions">
                 <button class="btn btn-info">edit</button>
@@ -157,6 +159,9 @@ export default {
     },
   },
   methods: {
+    refresh() {
+      this.$store.dispatch("getAvailableFiles");
+    },
     cancelProno(pronoID) {
       this.$store.dispatch("cancelProno", pronoID);
     },

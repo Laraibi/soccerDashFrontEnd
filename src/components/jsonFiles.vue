@@ -1,7 +1,7 @@
 <template>
-  <button class="btn btn-info" @click="test">test</button>
-  <div class="row justify-content-center">
-    <div class="col-6">
+  <div class="row">
+    <div class="col"><button class="btn btn-secondary" @click="refresh">refresh</button></div>
+    <div class="col">
       <table class="table table-bordered">
         <thead>
           <tr>
@@ -50,6 +50,9 @@ export default {
         );
       });
     },
+    refresh(){
+      this.$store.dispatch('getAvailableFiles')
+    }
   },
   created() {
     this.$store.dispatch("getAvailableFiles");
