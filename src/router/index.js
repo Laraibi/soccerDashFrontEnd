@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import selfPronos from '../views/selfPronos.vue'
 import importJson from '../views/importJson.vue'
 import ranking from "../components/ranking.vue"
+import GitHub from "../components/gitHub.vue"
 const routes = [
   {
     path: '/',
@@ -23,6 +24,11 @@ const routes = [
     path:'/ranking',
     name:'ranking',
     component:ranking
+  },
+  {
+    path:'/GitHub',
+    name:'GitHub',
+    component:GitHub
   }
 ]
 

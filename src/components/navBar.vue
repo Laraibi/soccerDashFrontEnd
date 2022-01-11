@@ -33,6 +33,11 @@
               >Classement</router-link
             >
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/GitHub"
+              >CD/CD GIT</router-link
+            >
+          </li>
         </ul>
         <form v-if="loggedUser.user == undefined" class="d-flex">
           <input
