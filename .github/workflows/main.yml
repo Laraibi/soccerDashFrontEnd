@@ -21,4 +21,4 @@ jobs:
         server: ${{ secrets.LARAVEL_SITE_SERVER}}
         username: ${{ secrets.LARAVEL_SITE_USER}}
         password: ${{ secrets.LARAVEL_SITE_PASS}}
-        local-dir: ${{ secrets.FTP_SUB_DIR}}
+        server-dir: ${{ secrets.FTP_SUB_DIR}}
