@@ -4,7 +4,7 @@ axios.defaults.withCredentials = true;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 axios.defaults.baseURL = "http://soccerDash.test/";
 // axios.defaults.baseURL = "http://192.168.1.6:901";
-// just for test the CD
+// just for test the CD ...
 let moment = require("moment");
 
 export default createStore({
